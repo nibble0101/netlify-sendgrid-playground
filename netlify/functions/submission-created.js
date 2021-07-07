@@ -15,10 +15,10 @@ exports.handler = async function (event, context) {
       to: email,
       subject: "We have received your message",
       text: `Hi ${name}! Thanks for getting in touch. This is to acknowledge receipt of your message`,
-      html: `<p>Hi ${name}! <br> Thanks for getting in touch. This is to acknowledge receipt of your email</p>`,
+      html: `<p>Hi ${name}! <br> Thanks for getting in touch. This is to acknowledge receipt of your message</p>`,
     };
-    console.log(message)
-    sendGridMail.send(mail);
+    console.log(message);
+    await sendGridMail.send(mail);
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Email sent" }),
