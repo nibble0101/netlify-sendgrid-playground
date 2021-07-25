@@ -10,12 +10,24 @@ exports.handler = async function (event, context) {
     sendGridMail.setApiKey(process.env.SENDGRID_API_KEY);
     const { payload } = JSON.parse(event.body);
     const { name, email, message } = payload.data;
+    const html = `
+      <div> 
+         Hi ${name}! <br><br>
+         Thanks for getting in touch.
+         We have received your message
+         and one of our customer care
+         representatives will get in
+         touch shortly
+         <br><br>
+         Best <br>
+         John Doe
+      </div>
+    `;
     const mail = {
       from: process.env.SENDER_EMAIL,
       to: email,
       subject: "We have received your message",
-      text: `Hi ${name}! Thanks for getting in touch. This is to acknowledge receipt of your message`,
-      html: `<p>Hi ${name}! <br> Thanks for getting in touch. This is to acknowledge receipt of your message</p>`,
+      html,
     };
     console.log(message);
     await sendGridMail.send(mail);
