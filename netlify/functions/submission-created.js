@@ -1,15 +1,14 @@
 const sendGridMail = require("@sendgrid/mail");
-exports.handler = async function (event, context) {
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      body: JSON.stringify({ message: "Method Not Allowed" }),
-    };
-  }
+
+const handler = async (event) => {
   try {
+    const {
+      payload: { name, email, message },
+    } = JSON.parse(event.body);
+
+    console.log(`name: ${name}, email: ${email} message: ${message}`);
+
     sendGridMail.setApiKey(process.env.SENDGRID_API_KEY);
-    const { payload } = JSON.parse(event.body);
-    const { name, email, message } = payload.data;
     const html = `
       <div> 
          Hi ${name}! <br><br>
@@ -29,14 +28,14 @@ exports.handler = async function (event, context) {
       subject: "We have received your message",
       html,
     };
-    console.log(message);
     await sendGridMail.send(mail);
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Email sent" }),
     };
-  } catch (err) {
-    console.log(err);
-    return { statusCode: 500, message: err.toString() };
+  } catch (error) {
+    return { statusCode: 422, body: String(error) };
   }
 };
+
+module.exports = { handler };
